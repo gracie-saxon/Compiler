@@ -1,0 +1,19 @@
+# Get code from github
+Two ways to do this
+## Existing repo
+git init
+git pull
+
+## New Repo
+git clone url
+
+# Put code Onto Github
+git init
+	- re initializes the repo
+git add .
+	- adds all files in the folder to the commit 
+git commit -m "message of the commit"
+	- gives your commit a name
+git push
+	- pushes the code to github
+
