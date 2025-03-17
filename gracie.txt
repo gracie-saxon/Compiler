@@ -1,3 +1,4 @@
+When in the repo directory
 # Get code from github
 Two ways to do this
 ## Existing repo
