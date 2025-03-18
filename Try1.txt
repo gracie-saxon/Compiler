@@ -19,6 +19,7 @@ using namespace std;
 
 ws          [ \t\r]+
 comment     "//".*\n
+new_comment "--".*\n
 line        [\n]
 
 id          [A-Za-z]([A-Za-z0-9_]*[A-Za-z0-9])?
@@ -32,8 +33,8 @@ punc        [\(\),:;]
 %%
 
 {ws}        { ECHO; }
-{comment}   { ECHO; nextLine(); }
-"--".*      { ECHO; nextLine(); }  /* New single-line comment format */
+{comment}   { ECHO; nextLine(); return 0; }
+{new_comment} { ECHO; nextLine(); return 0; } /* Fix for new comment format */
 {line}      { ECHO; nextLine(); }
 
 "+"         { ECHO; return(ADDOP); }
@@ -93,12 +94,18 @@ punc        [\(\),:;]
 int main() {
     firstLine();
     
-    FILE *file = fopen("lexemes.txt", "wa"); 
+    FILE *file = fopen("lexemes.txt", "w"); 
+    if (!file) {
+        fprintf(stderr, "Error opening lexemes.txt\n");
+        return 1;
+    }
+    
     int token = yylex();
     while (token) {
         fprintf(file, "%d %s\n", token, yytext);
         token = yylex();
     }
+    
     lastLine();
     fclose(file);
     return 0;
