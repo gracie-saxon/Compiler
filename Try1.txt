@@ -24,8 +24,8 @@ line    [\n]
 id      [A-Za-z]([A-Za-z0-9_])*  // Modify to allow underscores
 digit   [0-9]
 dec     {digit}+
-hex     "#"[0-9a-fA-F]+  // Hexadecimal literal
-char    '\\[abfnrtv\\"\'?]'|[^\n\r'\\]  // Fixed character literal regex
+hex     "#[0-9a-fA-F]+"  // Correct hexadecimal literal format
+char    '([^'\\\n]|\\[abfnrtv\\"\'?])'  // Fixed character literal regex
 real    {digit}+"."{digit}+([eE][-+]?[0-9]+)?  // Real number with optional exponent
 punc    [\(\),:;]
 %%
@@ -66,9 +66,9 @@ when            { ECHO; return(WHEN); }
 
 {id}            { ECHO; return(IDENTIFIER); }
 {dec}           { ECHO; return(INT_LITERAL); }
-{hex}           { ECHO; return(INT_LITERAL); } // Added Hexadecimal literal
-{char}          { ECHO; return(CHAR_LITERAL); }
-{real}          { ECHO; return(REAL_LITERAL); } // Added Real literal
+{hex}           { ECHO; return(INT_LITERAL); } // Hexadecimal literal
+{char}          { ECHO; return(CHAR_LITERAL); }  // Character literal
+{real}          { ECHO; return(REAL_LITERAL); }  // Real literal
 {punc}          { ECHO; return(yytext[0]); }
 .               { ECHO; appendError(LEXICAL, yytext); }
 
