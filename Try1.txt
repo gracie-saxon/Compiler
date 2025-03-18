@@ -3,6 +3,11 @@
    UMGC CITE
    Summer 2023 */
 
+/* CMSC 430 Compiler Theory and Design
+   Project 1 Skeleton
+   UMGC CITE
+   Summer 2023 */
+
 /* This file contains the Flex input file */
 
 %{
@@ -18,95 +23,78 @@ using namespace std;
 %option noyywrap
 
 ws          [ \t\r]+
-comment     "//".*\n
-new_comment "--".*\n
-line        [\n]
-
-id          [A-Za-z]([A-Za-z0-9_]*[A-Za-z0-9])?
-hex         \#[0-9A-Fa-f]+
+newline     \n
+comment     \-\-.*\n
+linecomment //.*
 digit       [0-9]
-dec         {digit}+
-real        {dec}?\.{digit}+([eE][+-]?{digit}+)?
-char        \\'([^\\\\']|\\\\[btnrf])\\'
-punc        [\(\),:;]
+id          [A-Za-z][A-Za-z0-9]*(_?[A-Za-z0-9]+)*
+real        {digit}+"."{digit}*([eE][+-]?{digit}+)?
+bool        "true"|"false"
+relop       "=/="|">="|"<="|"="|">"
+addop       [+-]
+mulop       [*/]
+remop       "rem"
+expop       "**"
+arrow       "=>"
+
+/* Reserved words */
+reserved    "case"|"else"|"endcase"|"endif"|"if"|"is"|"others"|"real"|"returns"|"then"|"when"
 
 %%
 
-{ws}        { ECHO; }
-{comment}   { ECHO; nextLine(); return 0; }
-{new_comment} { ECHO; nextLine(); return 0; } /* Fix for new comment format */
-{line}      { ECHO; nextLine(); }
+{ws}                { /* Ignore whitespace */ }
+{newline}           { nextLine(); }
+{comment}           { nextLine(); }
+{linecomment}       { /* Ignore C-style line comments */ }
 
-"+"         { ECHO; return(ADDOP); }
-"-"         { ECHO; return(ADDOP); }
-"*"         { ECHO; return(MULOP); }
-"/"         { ECHO; return(MULOP); }
-"%"         { ECHO; return(REMOP); }
-"^"         { ECHO; return(EXPOP); }
-"~"         { ECHO; return(NEGOP); }
-"&"         { ECHO; return(ANDOP); }
-"|"         { ECHO; return(OROP); }
-"!"         { ECHO; return(NOTOP); }
-"="         { ECHO; return(RELOP); }
-"<>"        { ECHO; return(RELOP); }
-">"         { ECHO; return(RELOP); }
-">="        { ECHO; return(RELOP); }
-"<"         { ECHO; return(RELOP); }
-"<="        { ECHO; return(RELOP); }
-"=>"        { ECHO; return(ARROW); }
+/* Reserved words should return their token names */
+"case"      { ECHO; return CASE; }
+"else"      { ECHO; return ELSE; }
+"endcase"   { ECHO; return ENDCASE; }
+"endif"     { ECHO; return ENDIF; }
+"if"        { ECHO; return IF; }
+"is"        { ECHO; return IS; }
+"others"    { ECHO; return OTHERS; }
+"real"      { ECHO; return REAL; }
+"returns"   { ECHO; return RETURNS; }
+"then"      { ECHO; return THEN; }
+"when"      { ECHO; return WHEN; }
 
-/* Reserved Words */
-"begin"     { ECHO; return(BEGIN_); }
-"case"      { ECHO; return(CASE); }
-"character" { ECHO; return(CHARACTER); }
-"else"      { ECHO; return(ELSE); }
-"elsif"     { ECHO; return(ELSIF); }
-"end"       { ECHO; return(END); }
-"endfold"   { ECHO; return(ENDFOLD); }
-"endif"     { ECHO; return(ENDIF); }
-"endswitch" { ECHO; return(ENDSWITCH); }
-"fold"      { ECHO; return(FOLD); }
-"function"  { ECHO; return(FUNCTION); }
-"if"        { ECHO; return(IF); }
-"integer"   { ECHO; return(INTEGER); }
-"is"        { ECHO; return(IS); }
-"left"      { ECHO; return(LEFT); }
-"list"      { ECHO; return(LIST); }
-"of"        { ECHO; return(OF); }
-"others"    { ECHO; return(OTHERS); }
-"real"      { ECHO; return(REAL); }
-"returns"   { ECHO; return(RETURNS); }
-"right"     { ECHO; return(RIGHT); }
-"switch"    { ECHO; return(SWITCH); }
-"then"      { ECHO; return(THEN); }
-"when"      { ECHO; return(WHEN); }
+/* Operators */
+{relop}             { ECHO; return RELOP; }
+{addop}             { ECHO; return ADDOP; }
+{mulop}             { ECHO; return MULOP; }
+"rem"               { ECHO; return REMOP; }
+"**"                { ECHO; return EXPOP; }
+"=>"                { ECHO; return ARROW; }
 
-{id}        { ECHO; return(IDENTIFIER); }
-{hex}       { ECHO; return(INT_LITERAL); }
-{dec}       { ECHO; return(INT_LITERAL); }
-{real}      { ECHO; return(REAL_LITERAL); }
-{char}      { ECHO; return(CHAR_LITERAL); }
-{punc}      { ECHO; return(yytext[0]); }
-.           { ECHO; appendError(LEXICAL, yytext); }
+/* Literals */
+{real}              { ECHO; return REAL_LITERAL; }
+"true"|"false"      { ECHO; return BOOL_LITERAL; }
+{id}                { ECHO; return IDENTIFIER; }
+{digit}+            { ECHO; return INT_LITERAL; }
+
+.                   { appendError(LEXICAL, yytext); }
 
 %%
 
 int main() {
     firstLine();
-    
-    FILE *file = fopen("lexemes.txt", "w"); 
+
+    FILE *file = fopen("lexemes.txt", "w");
     if (!file) {
         fprintf(stderr, "Error opening lexemes.txt\n");
         return 1;
     }
-    
+
     int token = yylex();
     while (token) {
         fprintf(file, "%d %s\n", token, yytext);
         token = yylex();
     }
-    
+
     lastLine();
     fclose(file);
+
     return 0;
 }
