@@ -25,7 +25,7 @@ id      [A-Za-z]([A-Za-z0-9_])*  // Modify to allow underscores
 digit   [0-9]
 dec     {digit}+
 hex     "#"[0-9a-fA-F]+  // Hexadecimal literal
-char    ['][^'\n']*[']  // Character literal
+char    '\\[abfnrtv\\"\'?]'|[^\n\r'\\]  // Fixed character literal regex
 real    {digit}+"."{digit}+([eE][-+]?[0-9]+)?  // Real number with optional exponent
 punc    [\(\),:;]
 %%
