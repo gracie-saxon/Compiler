@@ -1,14 +1,47 @@
 // CMSC 430 Compiler Theory and Design
-// Project 1 Skeleton
+// Project 1 Implementation
 // UMGC CITE
 // Summer 2023
-
 // This file contains the enumerated type definition for tokens
 
 enum Tokens {
-    ADDOP = 256, MULOP, ANDOP, OROP, NOTOP, REMOP, EXPOP, NEGOP,
-    RELOP, ARROW, BEGIN_, CASE, CHARACTER, ELSE, ELSIF, END,
-    ENDFOLD, ENDIF, ENDSWITCH, FOLD, FUNCTION, IF, INTEGER, IS,
-    LEFT, LIST, OF, OTHERS, REAL, RETURNS, RIGHT, SWITCH, THEN, WHEN,
-    IDENTIFIER, INT_LITERAL, REAL_LITERAL, CHAR_LITERAL
+    ADDOP = 256, 
+    MULOP, 
+    ANDOP, 
+    RELOP, 
+    ARROW, 
+    BEGIN_, 
+    CASE, 
+    CHARACTER, 
+    END,
+    ENDSWITCH, 
+    FUNCTION, 
+    INTEGER, 
+    IS, 
+    LIST, 
+    OF, 
+    OTHERS, 
+    RETURNS, 
+    SWITCH, 
+    WHEN,
+    IDENTIFIER, 
+    INT_LITERAL, 
+    CHAR_LITERAL,
+    // New tokens added for Project 1
+    OROP,
+    NOTOP,
+    REMOP,
+    EXPOP,
+    NEGOP,
+    ELSE,
+    ELSIF,
+    ENDFOLD,
+    ENDIF,
+    FOLD,
+    IF,
+    LEFT,
+    REAL,
+    RIGHT,
+    THEN,
+    REAL_LITERAL
 };
