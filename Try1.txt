@@ -1,85 +1,73 @@
-/* CMSC 430 Compiler Theory and Design
-   Project 1 Skeleton
-   UMGC CITE
-   Summer 2023 */
-
 /* This file contains flex input file */
 
 %{
+
 #include <cstdio>
 #include <string>
-
 using namespace std;
-
 #include "listing.h"
 #include "tokens.h"
 
 %}
 
 %option noyywrap
-
-ws      [ \t\r]+
-comment "//".*\n
-line    [\n]
-id      [A-Za-z]([A-Za-z0-9_])*  // Modify to allow underscores
-digit   [0-9]
-dec     {digit}+
-hex     "#[0-9a-fA-F]+"  // Correct hexadecimal literal format
-char    '([^'\\\n]|\\[abfnrtv\\"\'?])'  // Fixed character literal regex
-real    {digit}+"."{digit}+([eE][-+]?[0-9]+)?  // Real number with optional exponent
-punc    [\(\),:;]
-%%
-
-{ws}            { ECHO; }
-{comment}        { ECHO; nextLine(); }
-{line}           { ECHO; nextLine(); }
-"+"             { ECHO; return(ADDOP); }
-"-"             { ECHO; return(ADDOP); } // Added Subtraction operator
-"*"             { ECHO; return(MULOP); }
-"/"             { ECHO; return(MULOP); } // Added Division operator
-"&"             { ECHO; return(ANDOP); }
-"<"             { ECHO; return(RELOP); }
-"<>"            { ECHO; return(RELOP); } // Added Relational operator
-">"             { ECHO; return(RELOP); }
-">="            { ECHO; return(RELOP); }
-"<="            { ECHO; return(RELOP); }
-"=>"            { ECHO; return(ARROW); }
-"|"             { ECHO; return(OROP); }  // Added Logical operator OR
-"!"             { ECHO; return(NOTOP); } // Added Logical operator NOT
-"^"             { ECHO; return(EXPOP); } // Added Exponentiation operator
-"%"             { ECHO; return(REMOP); } // Added Remainder operator
-"~"             { ECHO; return(NEGOP); } // Added Unary minus operator
-begin           { ECHO; return(BEGIN_); }
-case            { ECHO; return(CASE); }
-character       { ECHO; return(CHARACTER); }
-end             { ECHO; return(END); }
-endswitch       { ECHO; return(ENDSWITCH); }
-function        { ECHO; return(FUNCTION); }
-integer         { ECHO; return(INTEGER); }
-is              { ECHO; return(IS); }
-list            { ECHO; return(LIST); }
-of              { ECHO; return(OF); }
-others          { ECHO; return(OTHERS); }
-returns         { ECHO; return(RETURNS); }
-switch          { ECHO; return(SWITCH); }
-when            { ECHO; return(WHEN); }
-
-{id}            { ECHO; return(IDENTIFIER); }
-{dec}           { ECHO; return(INT_LITERAL); }
-{hex}           { ECHO; return(INT_LITERAL); } // Hexadecimal literal
-{char}          { ECHO; return(CHAR_LITERAL); }  // Character literal
-{real}          { ECHO; return(REAL_LITERAL); }  // Real literal
-{punc}          { ECHO; return(yytext[0]); }
-.               { ECHO; appendError(LEXICAL, yytext); }
+ws [ \t]+
+comment --.*\n
+line \n
+id [A-Za-z_][A-Za-z0-9_]* /* Modified for underscores */
+digit [0-9]
+int {digit}+
+punc [(),:;]
 
 %%
 
-int main() {
+{ws} { ECHO; }
+{comment} { ECHO; nextLine(); }
+{line} { ECHO; nextLine(); }
+
+"<" { ECHO; return(RELOP); }
+"+" { ECHO; return(ADDOP); }
+"*" { ECHO; return(MULOP); }
+"or" { ECHO; return(OROP); } /* Logical OR operator */
+"not" { ECHO; return(NOTOP); } /* Logical NOT operator */
+"rem" { ECHO; return(REMOP); } /* Remainder operator */
+"**" { ECHO; return(EXPOP); } /* Exponentiation operator */
+"begin" { ECHO; return(BEGIN_); }
+"boolean" { ECHO; return(BOOLEAN); }
+"end" { ECHO; return(END); }
+"endcase" { ECHO; return(ENDREDUCE); }
+"function" { ECHO; return(FUNCTION); }
+"if" { ECHO; return(IF); } /* Reserved word if */
+"else" { ECHO; return(ELSE); } /* Reserved word else */
+"endcase" { ECHO; return(ENDCASE); } /* Reserved word endcase */
+"endif" { ECHO; return(ENDIF); } /* Reserved word endif */
+"others" { ECHO; return(OTHERS); } /* Reserved word others */
+"real" { ECHO; return(REAL); } /* Reserved word real */
+"then" { ECHO; return(THEN); } /* Reserved word then */
+"when" { ECHO; return(WHEN); } /* Reserved word when */
+
+{id} { ECHO; return(IDENTIFIER); }
+{int} { ECHO; return(INT_LITERAL); }
+
+// Real Literal
+{int}"."{int}("e"|"E"("+"|"-")?{int})? { ECHO; return(REAL_LITERAL); }
+
+// Boolean Literal
+"true"|"false" { ECHO; return(BOOL_LITERAL); }
+
+{punc} { ECHO; return(yytext[0]); }
+
+. { ECHO; appendError(LEXICAL, yytext); }
+
+%%
+
+int main()
+{
     firstLine();
-    
-    FILE *file = fopen("lexemes.txt", "wa"); 
+    FILE *file = fopen("lexemes.txt", "wa");
     int token = yylex();
-    while (token) {
+    while (token)
+    {
         fprintf(file, "%d %s\n", token, yytext);
         token = yylex();
     }
