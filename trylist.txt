@@ -1,0 +1,70 @@
+// listing.cc
+
+#include <cstdio>
+#include <string>
+#include <queue>
+
+using namespace std;
+
+#include "listing.h"
+
+static int lineNumber;
+static string error = "";
+static int totalErrors = 0;
+static queue<string> errorQueue;
+
+static void displayErrors();
+
+// Function to display the first line number
+void firstLine()
+{
+    lineNumber = 1;
+    printf("\n%4d  ", lineNumber);
+}
+
+// Function to display the next line number and errors
+void nextLine()
+{
+    displayErrors();
+    lineNumber++;
+    printf("%4d  ", lineNumber);
+}
+
+// Function to display the errors and return the total error count
+int lastLine()
+{
+    printf("\r");
+    displayErrors();
+    if (totalErrors == 0) {
+        printf("Compiled Successfully\n");
+    } else {
+        printf("Lexical Errors %d\n", totalErrors);
+    }
+    return totalErrors;
+}
+
+// Function to append errors and increment error count
+void appendError(ErrorCategories errorCategory, string message)
+{
+    string messages[] = { 
+        "Lexical Error, Invalid Character ", 
+        "", 
+        "Semantic Error, ", 
+        "Semantic Error, Duplicate ", 
+        "Semantic Error, Undeclared " 
+    };
+
+    error = messages[errorCategory] + message;
+    errorQueue.push(error);
+    totalErrors++;
+}
+
+// Function to display errors
+void displayErrors()
+{
+    while (!errorQueue.empty()) {
+        printf("%s\n", errorQueue.front().c_str());
+        errorQueue.pop();
+    }
+    error = "";
+}
