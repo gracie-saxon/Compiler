@@ -72,17 +72,15 @@ statement:
     FOLD direction operator list_choice ENDFOLD ;
 
 if_statement:
-    IF condition THEN statement elsif_parts else_part ENDIF ;
+    IF condition THEN statement_ elsif_list else_clause ENDIF ;
 
-elsif_parts:
-    elsif_parts elsif_part |
+elsif_list:
+    elsif_list ELSIF condition THEN statement_ |
     %empty ;
 
-elsif_part:
-    ELSIF condition THEN statement ;
-
-else_part:
-    ELSE statement ;
+else_clause:
+    ELSE statement_ |
+    %empty ;
 
 cases:
     cases case |
