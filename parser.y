@@ -15,8 +15,7 @@ void yyerror(const char* message);
 
 %token IDENTIFIER INT_LITERAL REAL_LITERAL CHAR_LITERAL
 %token ADDOP MULOP REMOP EXPOP NEGOP
-%token ANDOP OROP NOTOP
-%token RELOP ARROW
+%token ANDOP OROP NOTOP RELOP ARROW
 %token BEGIN_ CASE CHARACTER ELSE ELSIF END ENDIF ENDSWITCH ENDFOLD FOLD FUNCTION IF
 %token INTEGER IS LEFT LIST OF OTHERS REAL RETURNS RIGHT SWITCH THEN WHEN
 
@@ -25,16 +24,14 @@ function:
     function_header variables body ;
 
 function_header:
-    FUNCTION IDENTIFIER parameter_list RETURNS type ';' |
+    FUNCTION IDENTIFIER parameters RETURNS type ';' |
     FUNCTION IDENTIFIER RETURNS type ';' |
     error ';' ;
 
-parameter_list:
-    '(' parameters ')' ;
-
 parameters:
     parameter |
-    parameters ',' parameter ;
+    parameters ',' parameter |
+    %empty ;
 
 parameter:
     IDENTIFIER ':' type ;
@@ -70,18 +67,18 @@ statement_:
 statement:
     expression |
     WHEN condition ',' expression ':' expression |
-    SWITCH expression IS cases OTHERS ARROW statement ';' ENDSWITCH |
+    SWITCH expression IS cases OTHERS ARROW statement ENDSWITCH |
     if_statement |
     FOLD direction operator list_choice ENDFOLD ;
 
 if_statement:
-    IF condition THEN statement else_if_parts else_part ENDIF ;
+    IF condition THEN statement elsif_parts else_part ENDIF ;
 
-else_if_parts:
-    else_if_parts else_if_part |
+elsif_parts:
+    elsif_parts elsif_part |
     %empty ;
 
-else_if_part:
+elsif_part:
     ELSIF condition THEN statement ;
 
 else_part:
@@ -92,7 +89,7 @@ cases:
     %empty ;
 
 case:
-    CASE INT_LITERAL ARROW statement ';' |
+    CASE INT_LITERAL ARROW statement |
     error ';' ;
 
 direction:
