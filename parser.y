@@ -72,7 +72,7 @@ statement:
     FOLD direction operator list_choice ENDFOLD ;
 
 switch_statement:
-    SWITCH expression IS cases OTHERS ARROW statement ENDSWITCH ;
+    SWITCH expression IS cases OTHERS ARROW statement_ ENDSWITCH ;
 
 if_statement:
     IF condition THEN statement_ elsif_list else_clause ENDIF ;
@@ -87,10 +87,10 @@ else_clause:
 
 cases:
     cases case |
-    %empty ;
+    case ;
 
 case:
-    CASE INT_LITERAL ARROW statement |
+    CASE INT_LITERAL ARROW statement_ |
     error ';' ;
 
 direction:
