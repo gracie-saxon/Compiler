@@ -1,138 +1,139 @@
-/*‏‏‎ ‎CMSC‏‏‎ ‎430‏‏‎ ‎Project‏‏‎ ‎2‏‏‎ ‎-‏‏‎ ‎Syntactic‏‏‎ ‎Analyzer‏‏‎ ‎*/
-/*‏‏‎ ‎Compiler‏‏‎ ‎Theory‏‏‎ ‎and‏‏‎ ‎Design‏‏‎ ‎*/
-
 %{
-#include‏‏‎ ‎<string>
-using‏‏‎ ‎namespace‏‏‎ ‎std;
-
-#include‏‏‎ ‎"listing.h"
-
-int‏‏‎ ‎yylex();
-void‏‏‎ ‎yyerror(const‏‏‎ ‎char*‏‏‎ ‎message);
+#include <string>
+using namespace std;
+#include "listing.h"
+int yylex();
+void yyerror(const char* message);
 %}
 
-%define‏‏‎ ‎parse.error‏‏‎ ‎verbose
+%error-verbose
 
-%token‏‏‎ ‎IDENTIFIER
-%token‏‏‎ ‎INT_LITERAL
-%token‏‏‎ ‎REAL_LITERAL
-
-%token‏‏‎ ‎ADDOP‏‏‎ ‎MULOP‏‏‎ ‎EXPOP‏‏‎ ‎RELOP‏‏‎ ‎ANDOP‏‏‎ ‎OROP
-%token‏‏‎ ‎NOTOP
-
-%token‏‏‎ ‎BEGIN_‏‏‎ ‎BOOLEAN‏‏‎ ‎END‏‏‎ ‎ENDREDUCE‏‏‎ ‎FUNCTION‏‏‎ ‎INTEGER‏‏‎ ‎IS‏‏‎ ‎REDUCE‏‏‎ ‎RETURNS
-%token‏‏‎ ‎CASE‏‏‎ ‎WHEN‏‏‎ ‎ARROW‏‏‎ ‎OTHERS‏‏‎ ‎ENDCASE‏‏‎ ‎IF‏‏‎ ‎THEN‏‏‎ ‎ELSE‏‏‎ ‎ENDIF
+%token IDENTIFIER
+%token INT_LITERAL
+%token REAL_LITERAL
+%token BOOL_LITERAL
+%token ADDOP MULOP RELOP ANDOP OROP REMOP EXPOP
+%token BEGIN_ BOOLEAN END ENDREDUCE FUNCTION INTEGER IS REDUCE RETURNS
+%left ANDOP
+%left OROP
+%nonassoc RELOP
+%left ADDOP
+%left MULOP
+%right EXPOP
+%right NOT
 
 %%
 
-function:‏‏‎ ‎‏‏‎ ‎
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎function_header‏‏‎ ‎optional_variable‏‏‎ ‎body‏‏‎ ‎;
-‏‏‎ ‎‏‏‎ ‎
-function_header:‏‏‎ ‎‏‏‎ ‎
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎FUNCTION‏‏‎ ‎IDENTIFIER‏‏‎ ‎RETURNS‏‏‎ ‎type‏‏‎ ‎';'
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎error‏‏‎ ‎';'‏‏‎ ‎‏‏‎ ‎/*‏‏‎ ‎Error‏‏‎ ‎recovery‏‏‎ ‎using‏‏‎ ‎semicolon‏‏‎ ‎*/
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
+function:  
+    function_header optional_variable body ';' 
+    ;
+
+function_header:  
+    FUNCTION IDENTIFIER parameters RETURNS type ';' 
+    | FUNCTION IDENTIFIER RETURNS type ';' error
+    ;
+
+parameters: 
+    /* empty */ 
+    | parameter_list 
+    ;
+
+parameter_list: 
+    parameter
+    | parameter_list ',' parameter
+    ;
+
+parameter: 
+    IDENTIFIER ':' type
+    ;
 
 optional_variable:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎variable‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
+    variable_list
+    | /* empty */
+    ;
+
+variable_list:
+    variable
+    | variable_list variable
+    ;
 
 variable:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎IDENTIFIER‏‏‎ ‎':'‏‏‎ ‎type‏‏‎ ‎IS‏‏‎ ‎statement
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎error‏‏‎ ‎';'‏‏‎ ‎‏‏‎ ‎/*‏‏‎ ‎Error‏‏‎ ‎recovery‏‏‎ ‎using‏‏‎ ‎semicolon‏‏‎ ‎*/
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
+    IDENTIFIER ':' type IS statement
+    | IDENTIFIER ':' type error IS statement
+    ;
 
 type:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎INTEGER‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎BOOLEAN‏‏‎ ‎;
+    INTEGER
+    | REAL
+    | BOOLEAN
+    ;
 
 body:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎BEGIN_‏‏‎ ‎statement_list‏‏‎ ‎END‏‏‎ ‎';'‏‏‎ ‎;
-‏‏‎ ‎‏‏‎ ‎
+    BEGIN_ statement_list END
+    ;
+
 statement_list:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎statement_list‏‏‎ ‎statement_‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎statement_‏‏‎ ‎;
+    statement
+    | statement_list statement
+    ;
 
-statement_:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎statement‏‏‎ ‎';'‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎error‏‏‎ ‎';'‏‏‎ ‎;‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎/*‏‏‎ ‎Error‏‏‎ ‎recovery‏‏‎ ‎using‏‏‎ ‎semicolon‏‏‎ ‎*/
-‏‏‎ ‎‏‏‎ ‎
 statement:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎expression‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎REDUCE‏‏‎ ‎operator‏‏‎ ‎reductions‏‏‎ ‎ENDREDUCE‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎IF‏‏‎ ‎expression‏‏‎ ‎THEN‏‏‎ ‎statement‏‏‎ ‎ELSE‏‏‎ ‎statement‏‏‎ ‎ENDIF‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎CASE‏‏‎ ‎expression‏‏‎ ‎IS‏‏‎ ‎case_list‏‏‎ ‎OTHERS‏‏‎ ‎ARROW‏‏‎ ‎statement‏‏‎ ‎ENDCASE‏‏‎ ‎;
-
-operator:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎ADDOP‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎MULOP‏‏‎ ‎;
+    expression ';'
+    | REDUCE operator reductions ENDREDUCE
+    | IF expression THEN statement ELSE statement ENDIF
+    | CASE expression IS case_list OTHERS ARROW statement ENDCASE
+    | error ';'
+    ;
 
 reductions:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎reductions‏‏‎ ‎statement_‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎
+    reduction
+    | reductions reduction
+    ;
+
+reduction:
+    statement
+    ;
+
 case_list:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎case_list‏‏‎ ‎case_‏‏‎ ‎|
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎case_‏‏‎ ‎;
+    case
+    | case_list case
+    ;
 
-case_:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎WHEN‏‏‎ ‎INT_LITERAL‏‏‎ ‎ARROW‏‏‎ ‎statement
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎error‏‏‎ ‎';'‏‏‎ ‎‏‏‎ ‎/*‏‏‎ ‎Error‏‏‎ ‎recovery‏‏‎ ‎using‏‏‎ ‎semicolon‏‏‎ ‎*/
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
-‏‏‎ ‎‏‏‎ ‎
+case:
+    WHEN INT_LITERAL ARROW statement
+    ;
+
 expression:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎logical_or_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
+    '(' expression ')'
+    | REAL_LITERAL
+    | INT_LITERAL
+    | BOOL_LITERAL
+    | IDENTIFIER
+    | NOT expression
+    | expression binary_operator expression
+    ;
 
-logical_or_expr:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎logical_or_expr‏‏‎ ‎OROP‏‏‎ ‎logical_and_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎logical_and_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
-
-logical_and_expr:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎logical_and_expr‏‏‎ ‎ANDOP‏‏‎ ‎equality_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎equality_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
-
-equality_expr:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎equality_expr‏‏‎ ‎RELOP‏‏‎ ‎additive_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎additive_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
-
-additive_expr:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎additive_expr‏‏‎ ‎ADDOP‏‏‎ ‎multiplicative_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎multiplicative_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
-
-multiplicative_expr:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎multiplicative_expr‏‏‎ ‎MULOP‏‏‎ ‎exponential_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎exponential_expr
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
-
-exponential_expr:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎primary‏‏‎ ‎EXPOP‏‏‎ ‎primary
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎primary
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
-
-primary:
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎'('‏‏‎ ‎expression‏‏‎ ‎')'
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎NOTOP‏‏‎ ‎primary
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎INT_LITERAL
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎REAL_LITERAL
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎|‏‏‎ ‎IDENTIFIER
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎;
+binary_operator:
+    ADDOP
+    | MULOP
+    | REMOP
+    | EXPOP
+    | RELOP
+    | ANDOP
+    | OROP
+    ;
 
 %%
 
-void‏‏‎ ‎yyerror(const‏‏‎ ‎char*‏‏‎ ‎message)
+void yyerror(const char* message)
 {
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎appendError(SYNTAX,‏‏‎ ‎message);
+    appendError(SYNTAX, message);
 }
 
-int‏‏‎ ‎main(int‏‏‎ ‎argc,‏‏‎ ‎char‏‏‎ ‎*argv[])
+int main(int argc, char *argv[])
 {
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎firstLine();
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎yyparse();
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎lastLine();
-‏‏‎ ‎‏‏‎ ‎‏‏‎ ‎return‏‏‎ ‎0;
+    firstLine();
+    yyparse();
+    lastLine();
+    return 0;
 }
