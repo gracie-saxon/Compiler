@@ -67,9 +67,12 @@ statement_:
 statement:
     expression |
     WHEN condition ',' expression ':' expression |
-    SWITCH expression IS cases OTHERS ARROW statement ENDSWITCH |
+    switch_statement |
     if_statement |
     FOLD direction operator list_choice ENDFOLD ;
+
+switch_statement:
+    SWITCH expression IS cases OTHERS ARROW statement ENDSWITCH ;
 
 if_statement:
     IF condition THEN statement_ elsif_list else_clause ENDIF ;
