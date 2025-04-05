@@ -1,7 +1,9 @@
 /* CMSC 430 Compiler Theory and Design
    Project 2
    Gracie Saxon
-   April 1, 2025 */
+   April 5, 2025 */
+   
+// This file defines the Bison parser for a custom language, implementing its complete grammar, syntax rules, and error recovery for Project 2.
 
 %{
 #include <string>
