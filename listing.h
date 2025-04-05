@@ -1,7 +1,7 @@
 // CMSC 430 Compiler Theory and Design
-// Project 1 
+// Project 2
 // Gracie Saxon
-// March 24, 2025
+// April 05, 2025
 
 // This file contains the function prototypes for the functions that produce
 // the compilation listing
