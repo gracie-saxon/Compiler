@@ -9,7 +9,17 @@
 #include <cstdio>
 #include <string>
 #include <queue>
+#include <vector>
 using namespace std;
+
+// Type definitions needed before tokens.h
+typedef char* CharPtr;
+enum Operators {
+    ADD, SUBTRACT, MULTIPLY, DIVIDE, REMAINDER, EXPONENT, NEGATE,
+    LESS, LESSEQUAL, GREATER, GREATEREQUAL, EQUAL, NOTEQUAL,
+    AND, OR, NOT
+};
+
 #include "listing.h"
 #include "tokens.h"
 
