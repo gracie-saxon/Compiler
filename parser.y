@@ -109,14 +109,21 @@ ValueList:
 ;
 
 Operator:
-      '+' { $$ = ADD; }
-    | '-' { $$ = SUBTRACT; }
-    | '*' { $$ = MULTIPLY; }
-    | '/' { $$ = DIVIDE; }
-    | '%' { $$ = REMAINDER; }
-    | '^' { $$ = EXPONENT; }
-    | AND { $$ = AND; }
-    | OR  { $$ = OR; }
+      '+' { $$ = OP_ADD; }
+    | '-' { $$ = OP_SUBTRACT; }
+    | '*' { $$ = OP_MULTIPLY; }
+    | '/' { $$ = OP_DIVIDE; }
+    | '%' { $$ = OP_REMAINDER; }
+    | '^' { $$ = OP_EXPONENT; }
+    | AND { $$ = OP_AND; }
+    | OR  { $$ = OP_OR; }
+    | NOT { $$ = OP_NOT; }
+    | LESS { $$ = OP_LESS; }
+    | LESSEQUAL { $$ = OP_LESSEQUAL; }
+    | GREATER { $$ = OP_GREATER; }
+    | GREATEREQUAL { $$ = OP_GREATEREQUAL; }
+    | EQUAL { $$ = OP_EQUAL; }
+    | NOTEQUAL { $$ = OP_NOTEQUAL; }
 ;
 
 %%
