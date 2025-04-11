@@ -5,6 +5,8 @@
 
 // This file contains the function prototypes for the functions that produce
 // the compilation listing
+#include <string>
+using namespace std;
 
 enum ErrorCategories {LEXICAL, SYNTAX, GENERAL_SEMANTIC, DUPLICATE_IDENTIFIER,
 	UNDECLARED};
