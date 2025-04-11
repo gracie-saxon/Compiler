@@ -10,32 +10,32 @@
 
 double evaluateArithmetic(double left, Operators operator_, double right) {
     switch (operator_) {
-        case ADD: return left + right;
-        case SUBTRACT: return left - right;
-        case MULTIPLY: return left * right;
-        case DIVIDE: return right != 0 ? left / right : 0; // Handle divide by zero
-        case REMAINDER: return static_cast<int>(left) % static_cast<int>(right);
-        case EXPONENT: return pow(left, right);
+        case OP_ADD: return left + right;
+        case OP_SUBTRACT: return left - right;
+        case OP_MULTIPLY: return left * right;
+        case OP_DIVIDE: return right != 0 ? left / right : 0;
+        case OP_REMAINDER: return static_cast<int>(left) % static_cast<int>(right);
+        case OP_EXPONENT: return pow(left, right);
         default: return 0;
     }
 }
 
 double evaluateRelational(double left, Operators operator_, double right) {
     switch (operator_) {
-        case LESS: return left < right;
-        case LESSEQUAL: return left <= right;
-        case GREATER: return left > right;
-        case GREATEREQUAL: return left >= right;
-        case EQUAL: return left == right;
-        case NOTEQUAL: return left != right;
+        case OP_LESS: return left < right;
+        case OP_LESSEQUAL: return left <= right;
+        case OP_GREATER: return left > right;
+        case OP_GREATEREQUAL: return left >= right;
+        case OP_EQUAL: return left == right;
+        case OP_NOTEQUAL: return left != right;
         default: return 0;
     }
 }
 
 double evaluateLogical(double left, Operators operator_, double right) {
     switch (operator_) {
-        case AND: return (left != 0) && (right != 0);
-        case OR: return (left != 0) || (right != 0);
+        case OP_AND: return (left != 0) && (right != 0);
+        case OP_OR: return (left != 0) || (right != 0);
         default: return 0;
     }
 }
