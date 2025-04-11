@@ -166,7 +166,7 @@ expression:
     expression ADDOP term { $$ = evaluateArithmetic($1, $2, $3); } |
     term ;
 
-tem:
+term:
     term MULOP factor { $$ = evaluateArithmetic($1, $2, $3); } |
     term REMOP factor { $$ = evaluateArithmetic($1, $2, $3); } |
     factor ;
