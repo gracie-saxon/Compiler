@@ -4,6 +4,7 @@
    April 2025
 
    Parser with semantic actions for interpretation */
+
 %{
 #include <iostream>
 #include <cmath>
@@ -63,7 +64,7 @@ int main(int argc, char* argv[]) {
 %token AND OR NOT
 %token LESS LESSEQUAL GREATER GREATEREQUAL EQUAL NOTEQUAL
 
-%type <value> Goal FunctionBody Expression
+%type <value> Goal Expression
 %type <vec> ValueList
 %type <oper> Operator
 
@@ -83,20 +84,9 @@ Goal:
     BEGIN_ Expression ';'
     END ';'
     {
-        $$ = $7;  // ✅ Expression is at position 7
+        $$ = $7;
         cout << "Compiled Successfully" << endl;
         cout << "Result = " << $$ << endl;
-    }
-;
-
-FunctionHeader:
-    FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
-;
-
-FunctionBody:
-    BEGIN_ Expression ';'
-    {
-        $$ = $2;
     }
 ;
 
