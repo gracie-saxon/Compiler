@@ -84,9 +84,15 @@ when            { ECHO; return(WHEN); }
 
 {id}            { ECHO; yylval.iden = strdup(yytext); return(IDENTIFIER); }
 {dec}           { ECHO; yylval.value = atoi(yytext); return(INT_LITERAL); }
-{hex}           { ECHO; yylval.value = hexToInt(yytext); return(INT_LITERAL); }
+{hex}           { ECHO; yylval.value = hexToInt(yytext+1); return(INT_LITERAL); }
 {real}          { ECHO; yylval.value = atof(yytext); return(REAL_LITERAL); }
-{char}          { ECHO; yylval.value = decodeEscape(yytext); return(CHAR_LITERAL); }
+{char}          { ECHO; 
+                  if (yytext[1] == '\\') 
+                      yylval.value = decodeEscape(yytext); 
+                  else 
+                      yylval.value = yytext[1]; 
+                  return(CHAR_LITERAL); 
+                }
 {punc}          { ECHO; return(yytext[0]); }
 .               { ECHO; appendError(LEXICAL, yytext); }
 
@@ -94,7 +100,7 @@ when            { ECHO; return(WHEN); }
 
 int hexToInt(const char* text) {
     int value = 0;
-    sscanf(text + 1, "%x", &value);
+    sscanf(text, "%x", &value);
     return value;
 }
 
