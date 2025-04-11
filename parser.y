@@ -83,11 +83,11 @@ Goal:
     BEGIN_ Expression ';'
     END ';'
     {
+        $$ = $6; // Pass result up to main symbol
         cout << "Compiled Successfully" << endl;
-        cout << "Result = " << $6 << endl;
+        cout << "Result = " << $$ << endl;
     }
 ;
-
 
 FunctionHeader:
     FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
