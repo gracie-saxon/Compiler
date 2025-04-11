@@ -38,6 +38,7 @@ double result;
 %token AND OR NOT
 %token LESS LESSEQUAL GREATER GREATEREQUAL EQUAL NOTEQUAL
 
+%type <value> Goal FunctionBody
 %type <value> Expression
 %type <vec> ValueList
 %type <oper> Operator
