@@ -22,6 +22,7 @@ extern int yyparse();
 extern FILE* yyin;
 
 void yyerror(const char* message);
+
 double result;
 
 int main(int argc, char* argv[]) {
@@ -64,7 +65,7 @@ int main(int argc, char* argv[]) {
 %token AND OR NOT
 %token LESS LESSEQUAL GREATER GREATEREQUAL EQUAL NOTEQUAL
 
-%type <value> Goal Expression
+%type <value> Goal FunctionBody Expression
 %type <vec> ValueList
 %type <oper> Operator
 
@@ -79,26 +80,40 @@ int main(int argc, char* argv[]) {
 
 %%
 
+// The top-level rule: We parse the entire program as:
+// 1) A function header
+// 2) A function body
+// 3) 'end;'
+// Then print the result of the function body
 Goal:
     FunctionHeader FunctionBody END ';'
     {
+        // $2 is the FunctionBody's value
         $$ = $2;
         cout << "Compiled Successfully" << endl;
         cout << "Result = " << $$ << endl;
     }
 ;
 
+// A simple function header: "function main returns integer;"
 FunctionHeader:
     FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
 ;
 
+// A simple function body: "begin <expr>;" that returns the value of <expr>
 FunctionBody:
     BEGIN_ Expression ';'
+    {
+        // $2 is the Expression
+        $$ = $2;
+    }
 ;
 
+// Expression rules define arithmetic, relational, logical, fold, etc.
 Expression:
       INT_LITERAL                        { $$ = strtol($1, nullptr, 0); }
     | CHAR_LITERAL                       { $$ = (double)$1[0]; }
+
     | Expression '+' Expression          { $$ = evaluateArithmetic($1, OP_ADD, $3); }
     | Expression '-' Expression          { $$ = evaluateArithmetic($1, OP_SUBTRACT, $3); }
     | Expression '*' Expression          { $$ = evaluateArithmetic($1, OP_MULTIPLY, $3); }
@@ -106,26 +121,33 @@ Expression:
     | Expression '%' Expression          { $$ = evaluateArithmetic($1, OP_REMAINDER, $3); }
     | Expression '^' Expression          { $$ = evaluateArithmetic($1, OP_EXPONENT, $3); }
     | '-' Expression %prec NEGATE        { $$ = evaluateNegation($2); }
+
     | Expression LESS Expression         { $$ = evaluateRelational($1, OP_LESS, $3); }
     | Expression LESSEQUAL Expression    { $$ = evaluateRelational($1, OP_LESSEQUAL, $3); }
     | Expression GREATER Expression      { $$ = evaluateRelational($1, OP_GREATER, $3); }
     | Expression GREATEREQUAL Expression { $$ = evaluateRelational($1, OP_GREATEREQUAL, $3); }
     | Expression EQUAL Expression        { $$ = evaluateRelational($1, OP_EQUAL, $3); }
     | Expression NOTEQUAL Expression     { $$ = evaluateRelational($1, OP_NOTEQUAL, $3); }
+
     | Expression AND Expression          { $$ = evaluateLogical($1, OP_AND, $3); }
     | Expression OR Expression           { $$ = evaluateLogical($1, OP_OR, $3); }
     | NOT Expression                     { $$ = evaluateLogical($2, OP_NOT, 0); }
+
     | '(' Expression ')'                 { $$ = $2; }
+
     | IF Expression THEN Expression ELSE Expression ENDIF { $$ = $2 ? $4 : $6; }
+
     | FOLD LEFT Operator '(' ValueList ')' ENDFOLD        { $$ = evaluateFold(LEFT_DIR, $3, $5); delete $5; }
     | FOLD RIGHT Operator '(' ValueList ')' ENDFOLD       { $$ = evaluateFold(RIGHT_DIR, $3, $5); delete $5; }
 ;
 
+// Helper rule to parse a comma-separated list of expressions
 ValueList:
       Expression                         { $$ = new std::vector<double>(); $$->push_back($1); }
     | ValueList ',' Expression           { $$ = $1; $$->push_back($3); }
 ;
 
+// Operator tokens for fold statements
 Operator:
       '+' { $$ = OP_ADD; }
     | '-' { $$ = OP_SUBTRACT; }
