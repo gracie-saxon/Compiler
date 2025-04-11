@@ -14,13 +14,27 @@
 
 using namespace std;
 
-#include "values.h"
+// Forward declarations for types
+typedef char* CharPtr;
+enum Operators {
+    ADD, SUBTRACT, MULTIPLY, DIVIDE, REMAINDER, EXPONENT, NEGATE,
+    LESS, LESSEQUAL, GREATER, GREATEREQUAL, EQUAL, NOTEQUAL,
+    AND, OR, NOT
+};
+enum Direction { LEFT_DIR, RIGHT_DIR };
+
 #include "listing.h"
 #include "symbols.h"
 
+// Function declarations
 int yylex();
 void yyerror(const char* message);
 double extract_element(CharPtr list_name, double subscript);
+double evaluateArithmetic(double left, Operators operator_, double right);
+double evaluateRelational(double left, Operators operator_, double right);
+double evaluateLogical(double left, Operators operator_, double right);
+double evaluateNegation(double value);
+double evaluateFold(Direction dir, Operators oper, vector<double>* values);
 
 Symbols<double> scalars;
 Symbols<vector<double>*> lists;
@@ -48,8 +62,8 @@ int paramIndex = 0;
 %token BEGIN_ CASE CHARACTER ELSE ELSIF END ENDIF ENDSWITCH ENDFOLD FOLD FUNCTION IF
 %token INTEGER IS LEFT LIST OF OTHERS REAL RETURNS RIGHT SWITCH THEN WHEN
 
-%type <value> function function_header type body statement_ statement switch_statement if_statement elsif_list else_clause cases case expression term factor unary_expression primary condition or_condition and_condition not_condition relation variable direction list_choice
-%type <list> list expressions
+%type <value> function function_header type body statement_ statement switch_statement if_statement elsif_list else_clause cases case expression term factor unary_expression primary condition or_condition and_condition not_condition relation variable direction
+%type <list> list expressions list_choice
 
 %%
 function:
@@ -236,6 +250,101 @@ double extract_element(CharPtr list_name, double subscript) {
     }
     appendError(UNDECLARED, list_name);
     return NAN;
+}
+
+// Implementation of evaluateArithmetic
+double evaluateArithmetic(double left, Operators operator_, double right) {
+    switch (operator_) {
+        case ADD: return left + right;
+        case SUBTRACT: return left - right;
+        case MULTIPLY: return left * right;
+        case DIVIDE: 
+            if (right != 0) 
+                return left / right; 
+            else {
+                appendError(GENERAL_SEMANTIC, "Division by zero");
+                return NAN;
+            }
+        case REMAINDER: 
+            if (right != 0) 
+                return static_cast<int>(left) % static_cast<int>(right);
+            else {
+                appendError(GENERAL_SEMANTIC, "Modulo by zero");
+                return NAN;
+            }
+        case EXPONENT: return pow(left, right);
+        default: 
+            appendError(GENERAL_SEMANTIC, "Invalid arithmetic operator");
+            return NAN;
+    }
+}
+
+// Implementation of evaluateRelational
+double evaluateRelational(double left, Operators operator_, double right) {
+    switch (operator_) {
+        case LESS: return left < right;
+        case LESSEQUAL: return left <= right;
+        case GREATER: return left > right;
+        case GREATEREQUAL: return left >= right;
+        case EQUAL: return left == right;
+        case NOTEQUAL: return left != right;
+        default: 
+            appendError(GENERAL_SEMANTIC, "Invalid relational operator");
+            return NAN;
+    }
+}
+
+// Implementation of evaluateLogical
+double evaluateLogical(double left, Operators operator_, double right) {
+    switch (operator_) {
+        case AND: return left && right;
+        case OR: return left || right;
+        default: 
+            appendError(GENERAL_SEMANTIC, "Invalid logical operator");
+            return NAN;
+    }
+}
+
+// Implementation of evaluateNegation
+double evaluateNegation(double value) {
+    return -value;
+}
+
+// Implementation of evaluateFold
+double evaluateFold(Direction dir, Operators oper, vector<double>* values) {
+    if (!values || values->empty()) {
+        appendError(GENERAL_SEMANTIC, "Empty list in fold operation");
+        return NAN;
+    }
+
+    // Handle single element lists
+    if (values->size() == 1) {
+        return (*values)[0];
+    }
+
+    double result;
+    
+    if (dir == LEFT_DIR) {
+        // Left fold: ((a op b) op c) op d...
+        result = (*values)[0];
+        for (size_t i = 1; i < values->size(); ++i) {
+            result = evaluateArithmetic(result, oper, (*values)[i]);
+            if (isnan(result)) {
+                return NAN; // Error occurred in evaluation
+            }
+        }
+    } else {
+        // Right fold: a op (b op (c op d...))
+        result = (*values)[values->size() - 1];
+        for (int i = values->size() - 2; i >= 0; --i) {
+            result = evaluateArithmetic((*values)[i], oper, result);
+            if (isnan(result)) {
+                return NAN; // Error occurred in evaluation
+            }
+        }
+    }
+
+    return result;
 }
 
 int main(int argc, char *argv[]) {
