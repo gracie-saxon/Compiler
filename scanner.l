@@ -25,7 +25,11 @@ ID          [a-zA-Z][a-zA-Z0-9]*
 '\\t'                       { yylval.lexeme = strdup("\t"); return CHAR_LITERAL; }
 '\\''                       { yylval.lexeme = strdup("'"); return CHAR_LITERAL; }
 '\\\\'                      { yylval.lexeme = strdup("\\"); return CHAR_LITERAL; }
-'[^\\']'                    { yylval.lexeme = strdup(yytext); return CHAR_LITERAL; }
+'\\n'                      { yylval.lexeme = strdup("\n"); return CHAR_LITERAL; }
+'\\t'                      { yylval.lexeme = strdup("\t"); return CHAR_LITERAL; }
+"\\'"                      { yylval.lexeme = strdup("'"); return CHAR_LITERAL; }
+"\\\\"                     { yylval.lexeme = strdup("\\"); return CHAR_LITERAL; }
+'\''[^'\\]'\''             { yylval.lexeme = strdup(yytext + 1); yytext[2] = '\0'; return CHAR_LITERAL; }
 
 // Add tokens for operators, keywords, symbols, etc.
 // For example:
