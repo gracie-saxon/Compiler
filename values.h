@@ -8,6 +8,9 @@
 #ifndef VALUES_H
 #define VALUES_H
 
+#include <vector>
+#include <cmath>
+
 typedef char* CharPtr;
 
 // Operator types
@@ -23,6 +26,6 @@ double evaluateArithmetic(double left, Operators operator_, double right);
 double evaluateRelational(double left, Operators operator_, double right);
 double evaluateLogical(double left, Operators operator_, double right);
 double evaluateNegation(double value);
-double evaluateFold(Direction dir, Operators oper, vector<double>* values);
+double evaluateFold(Direction dir, Operators oper, std::vector<double>* values);
 
 #endif
