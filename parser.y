@@ -7,11 +7,14 @@
 
 %{
 #include <iostream>
+#include <vector>
 #include <cmath>
-#include <vector>        // <--- Needed for std::vector
 #include <string>
-#include "values.h"      // <--- Needed for enum Operators
-#include "listing.h"     // <--- For appendError
+#include <cstdlib>    // for atof
+#include <cstdio>     // for FILE*
+
+#include "values.h"
+#include "listing.h"
 
 using namespace std;
 
@@ -22,6 +25,23 @@ extern FILE* yyin;
 void yyerror(const char* message);
 
 double result;
+
+// Optional: global parameter array setup for future use
+// double* parameters = nullptr;
+
+// ---- THIS IS YOUR main() FUNCTION ----
+int main(int argc, char* argv[]) {
+    if (argc > 1) {
+        yyin = fopen(argv[1], "r");
+        if (!yyin) {
+            cerr << "Cannot open file: " << argv[1] << endl;
+            return 1;
+        }
+    }
+
+    yyparse();  // Kick off the parser
+    return 0;
+}
 %}
 
 %token <lexeme> IDENTIFIER
