@@ -48,7 +48,7 @@ int paramIndex = 0;
 %token BEGIN_ CASE CHARACTER ELSE ELSIF END ENDIF ENDSWITCH ENDFOLD FOLD FUNCTION IF
 %token INTEGER IS LEFT LIST OF OTHERS REAL RETURNS RIGHT SWITCH THEN WHEN
 
-%type <value> function function_header body statement_ statement switch_statement if_statement elsif_list else_clause cases case expression term factor unary_expression primary condition or_condition and_condition not_condition relation variable direction list_choice
+%type <value> function function_header type body statement_ statement switch_statement if_statement elsif_list else_clause cases case expression term factor unary_expression primary condition or_condition and_condition not_condition relation variable direction list_choice
 %type <list> list expressions
 
 %%
