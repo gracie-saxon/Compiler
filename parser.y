@@ -79,21 +79,12 @@ int main(int argc, char* argv[]) {
 %%
 
 Goal:
-    FunctionHeader FunctionBody END ';'
+    FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
+    BEGIN_ Expression ';'
+    END ';'
     {
         cout << "Compiled Successfully" << endl;
-        cout << "Result = " << $2 << endl;
-    }
-;
-
-FunctionHeader:
-    FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
-;
-
-FunctionBody:
-    BEGIN_ Expression ';'
-    {
-        $$ = $2;
+        cout << "Result = " << $6 << endl;
     }
 ;
 
