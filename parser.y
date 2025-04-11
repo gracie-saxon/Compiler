@@ -32,11 +32,21 @@ int main(int argc, char* argv[]) {
             cerr << "Cannot open file: " << argv[1] << endl;
             return 1;
         }
+    } else {
+        cerr << "Usage: ./compile <inputfile>" << endl;
+        return 1;
     }
+
     cout << "Parsing started..." << endl;
-    yyparse();
-    return 0;
-}
+    
+    // Optional debug mode for grammar trace
+    // extern int yydebug;
+    // yydebug = 1;
+
+    int parseResult = yyparse();
+
+    if (parseResult == 0) {
+
 %}
 
 %start Goal
