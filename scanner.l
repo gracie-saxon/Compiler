@@ -25,14 +25,14 @@ ID          [a-zA-Z][a-zA-Z0-9]*
 '\\t'                       { yylval.lexeme = strdup("\t"); return CHAR_LITERAL; }
 '\\''                       { yylval.lexeme = strdup("'"); return CHAR_LITERAL; }
 '\\\\'                      { yylval.lexeme = strdup("\\"); return CHAR_LITERAL; }
-'\\n'                      { yylval.lexeme = strdup("\n"); return CHAR_LITERAL; }
-'\\t'                      { yylval.lexeme = strdup("\t"); return CHAR_LITERAL; }
-"\\'"                      { yylval.lexeme = strdup("'"); return CHAR_LITERAL; }
-"\\\\"                     { yylval.lexeme = strdup("\\"); return CHAR_LITERAL; }
-'\''[^'\\]'\''             { yylval.lexeme = strdup(yytext + 1); yytext[2] = '\0'; return CHAR_LITERAL; }
+'\''[^'\\]'\''              {
+                             char* val = new char[2];
+                             val[0] = yytext[1];
+                             val[1] = '\0';
+                             yylval.lexeme = val;
+                             return CHAR_LITERAL;
+                           }
 
-// Add tokens for operators, keywords, symbols, etc.
-// For example:
 "function"                  { return FUNCTION; }
 "returns"                   { return RETURNS; }
 "begin"                     { return BEGIN_; }
@@ -79,4 +79,3 @@ ID          [a-zA-Z][a-zA-Z0-9]*
 int yywrap() {
     return 1;
 }
-
