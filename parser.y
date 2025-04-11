@@ -22,9 +22,9 @@ extern int yyparse();
 extern FILE* yyin;
 
 void yyerror(const char* message);
-
 double result;
 
+// ✅ Properly enclosed main()
 int main(int argc, char* argv[]) {
     if (argc > 1) {
         yyin = fopen(argv[1], "r");
@@ -38,16 +38,19 @@ int main(int argc, char* argv[]) {
     }
 
     cout << "Parsing started..." << endl;
-    
-    // Optional debug mode for grammar trace
-    // extern int yydebug;
-    // yydebug = 1;
 
     int parseResult = yyparse();
 
     if (parseResult == 0) {
+        cout << "Parsing completed without syntax errors." << endl;
+    } else {
+        cerr << "Parsing failed due to syntax errors." << endl;
+    }
 
+    return 0;
+}
 %}
+
 
 %start Goal
 
