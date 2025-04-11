@@ -80,14 +80,20 @@ int main(int argc, char* argv[]) {
 %%
 
 Goal:
-    FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
-    BEGIN_ Expression ';'
-    END ';'
+    FunctionHeader FunctionBody END ';'
     {
-        $$ = $7;
+        $$ = $2;
         cout << "Compiled Successfully" << endl;
         cout << "Result = " << $$ << endl;
     }
+;
+
+FunctionHeader:
+    FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
+;
+
+FunctionBody:
+    BEGIN_ Expression ';'
 ;
 
 Expression:
