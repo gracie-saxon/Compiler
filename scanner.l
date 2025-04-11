@@ -6,9 +6,11 @@
    This file contains the Flex input for lexical analysis */
 
 %{
-#include "listing.h"
-#include "parser.tab.h"
 #include <string>
+#include <vector>
+#include "values.h"       // needed for enum Operators
+#include "listing.h"
+#include "parser.tab.h"   // must come *after* those
 using namespace std;
 %}
 
