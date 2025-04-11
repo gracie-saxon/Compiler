@@ -7,12 +7,11 @@
 
 %{
 #include <iostream>
-#include <vector>
 #include <cmath>
+#include <vector>
 #include <string>
-#include <cstdlib>    // for atof
-#include <cstdio>     // for FILE*
-
+#include <cstdlib>
+#include <cstdio>
 #include "values.h"
 #include "listing.h"
 
@@ -26,10 +25,6 @@ void yyerror(const char* message);
 
 double result;
 
-// Optional: global parameter array setup for future use
-// double* parameters = nullptr;
-
-// ---- THIS IS YOUR main() FUNCTION ----
 int main(int argc, char* argv[]) {
     if (argc > 1) {
         yyin = fopen(argv[1], "r");
@@ -44,12 +39,7 @@ int main(int argc, char* argv[]) {
 }
 %}
 
-%token <lexeme> IDENTIFIER
-%token <lexeme> INT_LITERAL CHAR_LITERAL
-%token FUNCTION RETURNS BEGIN_ END IF THEN ELSE ENDIF
-%token FOLD LEFT RIGHT ENDFOLD
-%token AND OR NOT
-%token LESS LESSEQUAL GREATER GREATEREQUAL EQUAL NOTEQUAL
+%start Goal
 
 %union {
     char* lexeme;
@@ -58,12 +48,16 @@ int main(int argc, char* argv[]) {
     Operators oper;
 }
 
-%type <value> Goal FunctionBody
-%type <value> Expression
+%token <lexeme> IDENTIFIER
+%token <lexeme> INT_LITERAL CHAR_LITERAL
+%token FUNCTION RETURNS BEGIN_ END IF THEN ELSE ENDIF
+%token FOLD LEFT RIGHT ENDFOLD
+%token AND OR NOT
+%token LESS LESSEQUAL GREATER GREATEREQUAL EQUAL NOTEQUAL
+
+%type <value> Goal FunctionBody Expression
 %type <vec> ValueList
 %type <oper> Operator
-
-%start Goal 
 
 %left OR
 %left AND
@@ -86,6 +80,7 @@ Goal:
 
 FunctionHeader:
     FUNCTION IDENTIFIER ParameterList RETURNS IDENTIFIER ';'
+    | FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
 ;
 
 ParameterList:
@@ -126,7 +121,7 @@ Expression:
 ;
 
 ValueList:
-      Expression                         { $$ = new vector<double>(); $$->push_back($1); }
+      Expression                         { $$ = new std::vector<double>(); $$->push_back($1); }
     | ValueList ',' Expression           { $$ = $1; $$->push_back($3); }
 ;
 
@@ -152,5 +147,5 @@ Operator:
 
 void yyerror(const char* message) {
     appendError(SYNTAX, message);
+    cerr << "SYNTAX ERROR: " << message << endl;
 }
-
