@@ -72,7 +72,7 @@ ID          [a-zA-Z][a-zA-Z0-9]*
 {ID}                        { yylval.lexeme = strdup(yytext); return IDENTIFIER; }
 
 [ \t\r\n]+                  { /* skip whitespace */ }
-.                           { appendError(LEXICAL, "Invalid character"); }
+.                           appendError(LEXICAL, string("Invalid character"));
 
 %%
 
