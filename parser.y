@@ -38,8 +38,8 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-
-    yyparse();  // Kick off the parser
+    cout << "Parsing started..." << endl;
+    yyparse();
     return 0;
 }
 %}
