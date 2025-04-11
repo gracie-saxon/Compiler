@@ -4,7 +4,6 @@
    April 2025
 
    Parser with semantic actions for interpretation */
-
 %{
 #include <iostream>
 #include <cmath>
@@ -24,7 +23,6 @@ extern FILE* yyin;
 void yyerror(const char* message);
 double result;
 
-// ✅ Properly enclosed main()
 int main(int argc, char* argv[]) {
     if (argc > 1) {
         yyin = fopen(argv[1], "r");
@@ -38,7 +36,6 @@ int main(int argc, char* argv[]) {
     }
 
     cout << "Parsing started..." << endl;
-
     int parseResult = yyparse();
 
     if (parseResult == 0) {
@@ -46,11 +43,9 @@ int main(int argc, char* argv[]) {
     } else {
         cerr << "Parsing failed due to syntax errors." << endl;
     }
-
     return 0;
 }
 %}
-
 
 %start Goal
 
@@ -89,12 +84,7 @@ Goal:
         cout << "Compiled Successfully" << endl;
         cout << "Result = " << $2 << endl;
     }
-  | FunctionHeader FunctionBody END
-    {
-        cout << "Compiled Successfully (no trailing ;)" << endl;
-        cout << "Result = " << $2 << endl;
-    }
-  | error ';'
+  | error END ';'
     {
         yyerror("Invalid top-level syntax");
         yyclearin;
@@ -102,17 +92,11 @@ Goal:
 ;
 
 FunctionHeader:
-    FUNCTION IDENTIFIER ParameterList RETURNS IDENTIFIER ';'
-    | FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
-;
-
-ParameterList:
-    IDENTIFIER ':' IDENTIFIER
-    | ParameterList ',' IDENTIFIER ':' IDENTIFIER
+    FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
 ;
 
 FunctionBody:
-    BEGIN_ Expression
+    BEGIN_ Expression ';'
     {
         $$ = $2;
     }
