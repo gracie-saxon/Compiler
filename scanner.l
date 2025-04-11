@@ -6,11 +6,11 @@
    This file contains the Flex input for lexical analysis */
 
 %{
+#include "listing.h"
+#include "parser.tab.h"
 #include <string>
 #include <vector>
-#include "values.h"       // needed for enum Operators
-#include "listing.h"
-#include "parser.tab.h"   // must come *after* those
+#include "values.h"
 using namespace std;
 %}
 
@@ -27,7 +27,7 @@ ID          [a-zA-Z][a-zA-Z0-9]*
 '\\t'                       { yylval.lexeme = strdup("\t"); return CHAR_LITERAL; }
 '\\''                       { yylval.lexeme = strdup("'"); return CHAR_LITERAL; }
 '\\\\'                      { yylval.lexeme = strdup("\\"); return CHAR_LITERAL; }
-'\''[^'\\]'\''              {
+'[^\\']'                    {
                              char* val = new char[2];
                              val[0] = yytext[1];
                              val[1] = '\0';
@@ -74,7 +74,7 @@ ID          [a-zA-Z][a-zA-Z0-9]*
 {ID}                        { yylval.lexeme = strdup(yytext); return IDENTIFIER; }
 
 [ \t\r\n]+                  { /* skip whitespace */ }
-.                           appendError(LEXICAL, string("Invalid character"));
+.                           { printf("Unknown token: %s\n", yytext); appendError(LEXICAL, string("Invalid character")); }
 
 %%
 
