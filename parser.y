@@ -48,7 +48,8 @@ int paramIndex = 0;
 %token BEGIN_ CASE CHARACTER ELSE ELSIF END ENDIF ENDSWITCH ENDFOLD FOLD FUNCTION IF
 %token INTEGER IS LEFT LIST OF OTHERS REAL RETURNS RIGHT SWITCH THEN WHEN
 
-%type <value> function function_header type body statement_ statement switch_statement if_statement elsif_list else_clause cases case expression term factor unary_expression primary condition or_condition and_condition not_condition relation variable direction
+%type <value> function function_header type body statement_ statement switch_statement if_statement elsif_list else_clause cases case expression term factor unary_expression primary condition or_condition and_condition not_condition relation variable direction parameter
+%type <value> parameters variables
 %type <list> list expressions
 %type <value> list_choice
 %type <oper> operator
@@ -67,9 +68,9 @@ function_header:
     } ;
 
 parameters:
-    parameter |
-    parameters ',' parameter |
-    %empty ;
+    parameter { $$ = $1; } |
+    parameters ',' parameter { $$ = 0; } |
+    %empty { $$ = 0; } ;
 
 parameter:
     IDENTIFIER ':' type {
@@ -121,7 +122,8 @@ statement:
     switch_statement { $$ = $1; } |
     if_statement { $$ = $1; } |
     FOLD direction operator list_choice ENDFOLD {
-        $$ = evaluateFold($2, $3, (vector<double>*)$4);
+        vector<double>* list_ptr = (vector<double>*)(intptr_t)$4;
+        $$ = evaluateFold($2, $3, list_ptr);
     } ;
 
 switch_statement:
@@ -171,14 +173,14 @@ operator:
     EXPOP { $$ = $1; } ;
 
 list_choice:
-    list { $$ = (double)(intptr_t)$1; } | 
+    list { $$ = (intptr_t)$1; } | 
     IDENTIFIER {
         vector<double>* listVal;
         if (!lists.find($1, listVal)) {
             appendError(UNDECLARED, $1);
             $$ = 0;
         } else {
-            $$ = (double)(intptr_t)listVal;
+            $$ = (intptr_t)listVal;
         }
     } ;
 
