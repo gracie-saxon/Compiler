@@ -76,6 +76,7 @@ Goal:
         cout << "Compiled Successfully" << endl;
         cout << "Result = " << $2 << endl;
     }
+  | error ';' { yyerror("Invalid top-level syntax"); yyclearin; }
 ;
 
 FunctionHeader:
