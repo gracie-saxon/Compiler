@@ -12,7 +12,6 @@
 #include <string>
 #include "values.h"
 #include "listing.h"
-
 using namespace std;
 
 extern int yylex();
@@ -23,6 +22,7 @@ void yyerror(const char* message);
 
 double result;
 %}
+
 
 %union {
     char* lexeme;
