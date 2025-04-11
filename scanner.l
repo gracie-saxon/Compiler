@@ -6,13 +6,15 @@
    This file contains the Flex input for lexical analysis */
 
 %{
-#include "listing.h"
-#include "parser.tab.h"
 #include <string>
-#include <vector>
-#include "values.h"
+#include <vector>         // ✅ Required for std::vector
+#include "values.h"       // ✅ Required for enum Operators
+#include "listing.h"
+#include "parser.tab.h"   // ✅ Must come *after* the others
+
 using namespace std;
 %}
+
 
 DIGIT       [0-9]
 HEXDIGIT    [0-9a-fA-F]
