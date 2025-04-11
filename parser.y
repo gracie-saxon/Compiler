@@ -24,20 +24,19 @@ void yyerror(const char* message);
 double result;
 %}
 
-
-%union {
-    char* lexeme;
-    double value;
-    vector<double>* vec;
-    Operators oper;
-}
-
 %token <lexeme> IDENTIFIER
 %token <lexeme> INT_LITERAL CHAR_LITERAL
 %token FUNCTION RETURNS BEGIN_ END IF THEN ELSE ENDIF
 %token FOLD LEFT RIGHT ENDFOLD
 %token AND OR NOT
 %token LESS LESSEQUAL GREATER GREATEREQUAL EQUAL NOTEQUAL
+
+%union {
+    char* lexeme;
+    double value;
+    std::vector<double>* vec;
+    Operators oper;
+}
 
 %type <value> Goal FunctionBody
 %type <value> Expression
