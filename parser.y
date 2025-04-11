@@ -63,6 +63,8 @@ int main(int argc, char* argv[]) {
 %type <vec> ValueList
 %type <oper> Operator
 
+%start Goal 
+
 %left OR
 %left AND
 %left EQUAL NOTEQUAL
