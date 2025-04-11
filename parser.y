@@ -7,11 +7,12 @@
 
 %{
 #include <iostream>
-#include <vector>
 #include <cmath>
+#include <vector>        // <--- Needed for std::vector
 #include <string>
-#include "values.h"
-#include "listing.h"
+#include "values.h"      // <--- Needed for enum Operators
+#include "listing.h"     // <--- For appendError
+
 using namespace std;
 
 extern int yylex();
