@@ -84,12 +84,19 @@ Goal:
         cout << "Compiled Successfully" << endl;
         cout << "Result = " << $2 << endl;
     }
-  | error END ';'
+;
+
+FunctionHeader:
+    FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
+;
+
+FunctionBody:
+    BEGIN_ Expression ';'
     {
-        yyerror("Invalid top-level syntax");
-        yyclearin;
+        $$ = $2;
     }
 ;
+
 
 FunctionHeader:
     FUNCTION IDENTIFIER RETURNS IDENTIFIER ';'
