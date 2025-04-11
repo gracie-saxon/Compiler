@@ -2,5 +2,5 @@
 
 function main returns integer;
 begin
-    7 + 2 * (5  + 4);
+    7 + 2 * 5  + 4;
 end;
