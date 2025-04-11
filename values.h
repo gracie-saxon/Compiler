@@ -9,7 +9,7 @@
 #define VALUES_H
 
 #include <vector>
-#include <cmath>
+using namespace std;
 
 typedef char* CharPtr;
 
@@ -22,10 +22,11 @@ enum Operators {
 
 enum Direction { LEFT_DIR, RIGHT_DIR };
 
+// Function declarations
 double evaluateArithmetic(double left, Operators operator_, double right);
 double evaluateRelational(double left, Operators operator_, double right);
 double evaluateLogical(double left, Operators operator_, double right);
 double evaluateNegation(double value);
-double evaluateFold(Direction dir, Operators oper, std::vector<double>* values);
+double evaluateFold(Direction dir, Operators oper, vector<double>* values);
 
 #endif
