@@ -83,7 +83,7 @@ Goal:
     BEGIN_ Expression ';'
     END ';'
     {
-        $$ = $6; // Pass result up to main symbol
+        $$ = $7;  // ✅ Expression is at position 7
         cout << "Compiled Successfully" << endl;
         cout << "Result = " << $$ << endl;
     }
