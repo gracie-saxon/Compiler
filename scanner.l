@@ -15,44 +15,26 @@
 using namespace std;
 %}
 
-///////////////////////////////////////////////////
-//    Patterns / Definitions
-///////////////////////////////////////////////////
 DIGIT       [0-9]
 HEXDIGIT    [0-9a-fA-F]
 ID          [a-zA-Z][a-zA-Z0-9]*
 
-///////////////////////////////////////////////////
-//    Rules
-///////////////////////////////////////////////////
 %%
-///////////////////////////////////////////////////////////////////////////
-// Integer literals
-///////////////////////////////////////////////////////////////////////////
 {DIGIT}+                 { yylval.lexeme = strdup(yytext); return INT_LITERAL; }
 0[xX]{HEXDIGIT}+         { yylval.lexeme = strdup(yytext); return INT_LITERAL; }
 
-///////////////////////////////////////////////////////////////////////////
-// Character literals (escape sequences + single char)
-///////////////////////////////////////////////////////////////////////////
-'\\n'                    { yylval.lexeme = strdup("\n");  return CHAR_LITERAL; }
-'\\t'                    { yylval.lexeme = strdup("\t");  return CHAR_LITERAL; }
-'\\''                    { yylval.lexeme = strdup("'");   return CHAR_LITERAL; }
-'\\\\'                   { yylval.lexeme = strdup("\\");  return CHAR_LITERAL; }
-/'[^\\\\']'/             { 
-                           // Single non-escape char literal
-                           // e.g. 'a' or 'Z'
-                           // We store only the inside char
+'\\n'                    { yylval.lexeme = strdup("\n"); return CHAR_LITERAL; }
+'\\t'                    { yylval.lexeme = strdup("\t"); return CHAR_LITERAL; }
+'\\''                    { yylval.lexeme = strdup("'");  return CHAR_LITERAL; }
+'\\\\'                   { yylval.lexeme = strdup("\\"); return CHAR_LITERAL; }
+'[^\\']'                 {
                            char* val = new char[2];
                            val[0] = yytext[1];
                            val[1] = '\0';
                            yylval.lexeme = val;
-                           return CHAR_LITERAL; 
+                           return CHAR_LITERAL;
                          }
 
-///////////////////////////////////////////////////////////////////////////
-// Keywords that match your parser tokens
-///////////////////////////////////////////////////////////////////////////
 "function"              { return FUNCTION; }
 "returns"               { return RETURNS; }
 "begin"                 { return BEGIN_; }
@@ -69,57 +51,34 @@ ID          [a-zA-Z][a-zA-Z0-9]*
 "or"                    { return OR; }
 "not"                   { return NOT; }
 
-///////////////////////////////////////////////////////////////////////////
-// Relational operators
-///////////////////////////////////////////////////////////////////////////
 "<="                    { return LESSEQUAL; }
 ">="                    { return GREATEREQUAL; }
-"<>|!="                 { return NOTEQUAL; }   // Optionally allow '<>' or '!='
+"<>|!="                 { return NOTEQUAL; }
 "<"                     { return LESS; }
 ">"                     { return GREATER; }
 "="                     { return EQUAL; }
 
-///////////////////////////////////////////////////////////////////////////
-// Arithmetic operators
-///////////////////////////////////////////////////////////////////////////
-"\\+"                   { return '+'; }
-"-"                     { return '-'; }
-"\\*"                   { return '*'; }
-"/"                     { return '/'; }
-"%"                     { return '%'; }
-"\\^"                   { return '^'; }
+"\\+"                  { return '+'; }
+"-"                    { return '-'; }
+"\\*"                  { return '*'; }
+"/"                    { return '/'; }
+"%"                    { return '%'; }
+"\\^"                  { return '^'; }
 
-///////////////////////////////////////////////////////////////////////////
-// Other punctuation
-///////////////////////////////////////////////////////////////////////////
-":"                     { return ':'; }
-","                     { return ','; }
-";"                     { return ';'; }
-"\\("                   { return '('; }
-"\\)"                   { return ')'; }
+":"                    { return ':'; }
+","                    { return ','; }
+";"                    { return ';'; }
+"\\("                  { return '('; }
+"\\)"                  { return ')'; }
 
-///////////////////////////////////////////////////////////////////////////
-// Identifiers
-///////////////////////////////////////////////////////////////////////////
-{ID}                    { yylval.lexeme = strdup(yytext); return IDENTIFIER; }
+{ID}                   { yylval.lexeme = strdup(yytext); return IDENTIFIER; }
 
-///////////////////////////////////////////////////////////////////////////
-// Whitespace (ignored)
-///////////////////////////////////////////////////////////////////////////
-[ \t\r\n]+              { /* skip whitespace */ }
+[ \t\r\n]+             { /* skip whitespace */ }
 
-///////////////////////////////////////////////////////////////////////////
-// Fallback for unknown tokens - helps debug
-///////////////////////////////////////////////////////////////////////////
-.                       { 
-                          printf("Unknown token: %s\n", yytext);
-                          appendError(LEXICAL, string("Invalid character: ") + yytext);
-                        }
+.                      { appendError(LEXICAL, "Invalid character"); }
 
 %%
-///////////////////////////////////////////////////
-//    Wrap-Up
-///////////////////////////////////////////////////
+
 int yywrap() {
     return 1;
 }
