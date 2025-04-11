@@ -141,7 +141,7 @@ operator:
     ADDOP | MULOP | REMOP | EXPOP ;
 
 list_choice:
-    list | IDENTIFIER {
+    list { $$ = $1; } | IDENTIFIER {
         if (!lists.find($1, $$)) appendError(UNDECLARED, $1);
     } ;
 
@@ -215,3 +215,4 @@ int main(int argc, char *argv[]) {
         cout << "Result = " << result << endl;
     return 0;
 }
+
