@@ -8,6 +8,7 @@
 #include <string>
 #include <cmath>
 #include <vector>
+#include <limits>
 
 using namespace std;
 
@@ -19,8 +20,18 @@ double evaluateArithmetic(double left, Operators operator_, double right) {
         case ADD: return left + right;
         case SUBTRACT: return left - right;
         case MULTIPLY: return left * right;
-        case DIVIDE: return right != 0 ? left / right : NAN;
-        case REMAINDER: return static_cast<int>(left) % static_cast<int>(right);
+        case DIVIDE: 
+            if (right == 0) {
+                appendError(GENERAL_SEMANTIC, "Division by zero");
+                return NAN;
+            }
+            return left / right;
+        case REMAINDER: 
+            if (right == 0) {
+                appendError(GENERAL_SEMANTIC, "Modulo by zero");
+                return NAN;
+            }
+            return static_cast<int>(left) % static_cast<int>(right);
         case EXPONENT: return pow(left, right);
         default: return NAN;
     }
