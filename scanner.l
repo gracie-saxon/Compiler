@@ -3,11 +3,12 @@
    Gracie Saxon
    April 13, 2025 */
 
+/* This file contains flex input file */
+
 %{
 #include <cstdio>
 #include <string>
 #include <vector>
-#include <cmath>
 #include <cstring>
 
 using namespace std;
@@ -16,12 +17,9 @@ using namespace std;
 #include "listing.h"
 #include "tokens.h"
 
-extern int hexToInt(const char* hexStr);
-extern char parseCharLiteral(const char* literal);
 %}
 
 %option noyywrap
-
 ws		[ \t\r]+
 comment		"//".*\n
 line_comment	"--".*\n
@@ -33,9 +31,7 @@ hex		"#"([0-9]|[A-Fa-f])+
 real		{digit}*"."({digit}+)(([eE][+-]?{digit}+))?|{digit}+"."({digit}*)(([eE][+-]?{digit}+))?
 char		'[^\\']'|'\\[bntrf]'
 punc		[\(\),:;]
-
 %%
-
 {ws}		{ ECHO; }
 {comment}	{ ECHO; nextLine(); }
 {line_comment}	{ ECHO; nextLine(); }
@@ -81,12 +77,12 @@ right		{ ECHO; return(RIGHT); }
 switch		{ ECHO; return(SWITCH); }
 then		{ ECHO; return(THEN); }
 when		{ ECHO; return(WHEN); }
-{id}		{ ECHO; yylval.iden = (CharPtr)malloc(yyleng + 1); strcpy(yylval.iden, yytext); return(IDENTIFIER);}
+{id}		{ ECHO; yylval.iden = (CharPtr)malloc(yyleng + 1); 
+			strcpy(yylval.iden, yytext); return(IDENTIFIER);}
 {dec}		{ ECHO; yylval.value = atoi(yytext); return(INT_LITERAL); }
 {hex}		{ ECHO; yylval.value = hexToInt(yytext); return(INT_LITERAL); }
 {real}		{ ECHO; yylval.value = atof(yytext); return(REAL_LITERAL); }
 {char}		{ ECHO; yylval.value = parseCharLiteral(yytext); return(CHAR_LITERAL); }
 {punc}		{ ECHO; return(yytext[0]); }
 .		{ ECHO; appendError(LEXICAL, yytext); }
-
 %%
