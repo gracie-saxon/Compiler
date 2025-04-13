@@ -24,8 +24,10 @@ int yylex();
 void yyerror(const char* message);
 double extract_element(CharPtr list_name, double subscript);
 double evaluateFold(Operators oper, vector<double>* list, bool isLeft);
-int hexToInt(const char* hexStr);
-char parseCharLiteral(const char* literal);
+
+// Forward declarations for functions defined in values.cc
+extern int hexToInt(const char* hexStr);
+extern char parseCharLiteral(const char* literal);
 
 Symbols<double> scalars;
 Symbols<vector<double>*> lists;
@@ -227,26 +229,6 @@ double evaluateFold(Operators oper, vector<double>* list, bool isLeft) {
     }
     
     return result;
-}
-
-int hexToInt(const char* hexStr) {
-    // Skip the '#' prefix
-    return strtol(hexStr + 1, NULL, 16);
-}
-
-char parseCharLiteral(const char* literal) {
-    if (literal[1] != '\\')
-        return literal[1];
-    
-    // Handle escape characters
-    switch(literal[2]) {
-        case 'n': return '\n';
-        case 't': return '\t';
-        case 'r': return '\r';
-        case 'f': return '\f';
-        case 'b': return '\b';
-        default: return literal[2];
-    }
 }
 
 int main(int argc, char *argv[]) {
