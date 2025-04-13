@@ -56,7 +56,7 @@ double* parameters = NULL;
 
 %type <value> body statement_ statement cases case expression term factor primary
 	 unary_expression condition or_condition and_condition not_condition relation else_clause
-	 if_statement switch_statement direction
+	 if_statement switch_statement direction elsif_list
 
 %type <list> list expressions list_choice
 
@@ -118,11 +118,11 @@ switch_statement:
 		{$$ = !isnan($4) ? $4 : $7;} ;
 
 if_statement:
-	IF condition THEN statement_ elsif_list else_clause ENDIF {$$ = $2 ? $4 : $6;} ;
+	IF condition THEN statement_ elsif_list else_clause ENDIF {$$ = $2 ? $4 : ($5 != 0 ? $5 : $6);} ;
 
 elsif_list:
-	elsif_list ELSIF condition THEN statement_ {if (!$1 && $3) $<value>$ = $5;} |
-	%empty {$<value>$ = 0;} ;
+	elsif_list ELSIF condition THEN statement_ {$$ = ($1 != 0) ? $1 : ($3 ? $5 : 0);} |
+	%empty {$$ = 0;} ;
 
 else_clause:
 	ELSE statement_ {$$ = $2;} |
