@@ -3,8 +3,6 @@
    Gracie Saxon
    April 13, 2025 */
 
-/* This file contains flex input file */
-
 %{
 #include <cstdio>
 #include <string>
@@ -20,7 +18,6 @@ using namespace std;
 
 extern int hexToInt(const char* hexStr);
 extern char parseCharLiteral(const char* literal);
-
 %}
 
 %option noyywrap
@@ -84,9 +81,7 @@ right		{ ECHO; return(RIGHT); }
 switch		{ ECHO; return(SWITCH); }
 then		{ ECHO; return(THEN); }
 when		{ ECHO; return(WHEN); }
-
-{id}		{ ECHO; yylval.iden = (CharPtr)malloc(yyleng + 1); 
-			strcpy(yylval.iden, yytext); return(IDENTIFIER);}
+{id}		{ ECHO; yylval.iden = (CharPtr)malloc(yyleng + 1); strcpy(yylval.iden, yytext); return(IDENTIFIER);}
 {dec}		{ ECHO; yylval.value = atoi(yytext); return(INT_LITERAL); }
 {hex}		{ ECHO; yylval.value = hexToInt(yytext); return(INT_LITERAL); }
 {real}		{ ECHO; yylval.value = atof(yytext); return(REAL_LITERAL); }
