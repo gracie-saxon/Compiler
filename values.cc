@@ -1,4 +1,3 @@
-// values.cc
 // CMSC 430 Compiler Theory and Design
 // Project 3
 // Gracie Saxon
@@ -9,6 +8,7 @@
 #include <string>
 #include <cmath>
 #include <limits>
+#include <cstdlib>
 
 using namespace std;
 
@@ -48,6 +48,9 @@ double evaluateArithmetic(double left, Operators operator_, double right) {
         case EXPONENT:
             result = pow(left, right);
             break;
+        default:
+            appendError(GENERAL_SEMANTIC, "Unknown arithmetic operator");
+            result = numeric_limits<double>::quiet_NaN();
     }
     
     return result;
@@ -75,7 +78,32 @@ double evaluateRelational(double left, Operators operator_, double right) {
         case NOT_EQUAL:
             result = left != right;
             break;
+        default:
+            appendError(GENERAL_SEMANTIC, "Unknown relational operator");
+            result = numeric_limits<double>::quiet_NaN();
     }
     
     return result;
+}
+
+// Convert a hexadecimal string to an integer
+int hexToInt(const char* hexStr) {
+    // Skip the '#' prefix
+    return strtol(hexStr + 1, NULL, 16);
+}
+
+// Parse a character literal, handling escape characters
+char parseCharLiteral(const char* literal) {
+    if (literal[1] != '\\')
+        return literal[1];
+    
+    // Handle escape characters
+    switch(literal[2]) {
+        case 'n': return '\n';
+        case 't': return '\t';
+        case 'r': return '\r';
+        case 'f': return '\f';
+        case 'b': return '\b';
+        default: return literal[2];
+    }
 }
