@@ -1,35 +1,43 @@
 // CMSC 430 Compiler Theory and Design
-// Project 3 Complete
-// UMGC CITE
-// Summer 2023
+// Project 3
+// symbols.h 
 
-// This file contains the template symbol table
+// This file contains the class definition for the symbol table
+// used for variables
 
 template <typename T>
 class Symbols
 {
 public:
-	void insert(char* lexeme, T entry);
-	bool find(char* lexeme, T& entry);
+    Symbols() {}
+    bool find(char* name, T& value) const;
+    void insert(char* name, T value);
 private:
-	map<string, T> symbols;
+    struct Symbol
+    {
+        char* name;
+        T value;
+    };
+    vector<Symbol> symbols;
 };
 
 template <typename T>
-void Symbols<T>::insert(char* lexeme, T entry)
+bool Symbols<T>::find(char* name, T& value) const
 {
-	string name(lexeme);
-	symbols[name] = entry;
+    for (const auto& symbol : symbols)
+        if (strcmp(symbol.name, name) == 0)
+        {
+            value = symbol.value;
+            return true;
+        }
+    return false;
 }
 
 template <typename T>
-bool Symbols<T>::find(char* lexeme, T& entry)
+void Symbols<T>::insert(char* name, T value)
 {
-	string name(lexeme);
-	typedef typename map<string, T>::iterator Iterator;
-	Iterator iterator = symbols.find(name);
-	bool found = iterator != symbols.end();
-	if (found)
-		entry = iterator->second;
-	return found;
+    Symbol symbol;
+    symbol.name = name;
+    symbol.value = value;
+    symbols.push_back(symbol);
 }
