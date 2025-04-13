@@ -56,9 +56,9 @@ double* parameters = NULL;
 
 %type <value> body statement_ statement cases case expression term factor primary
 	 unary_expression condition or_condition and_condition not_condition relation else_clause
-	 if_statement switch_statement
+	 if_statement switch_statement direction
 
-%type <list> list expressions
+%type <list> list expressions list_choice
 
 %%
 
