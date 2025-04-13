@@ -52,7 +52,7 @@ double* parameters = NULL;
 %token ARROW
 
 %token BEGIN_ CASE CHARACTER ELSE ELSIF END ENDIF ENDSWITCH ENDFOLD FOLD FUNCTION IF
-	INTEGER IS LEFT LIST OF OTHERS REAL RETURNS RIGHT SWITCH THEN WHEN
+	INTEGER IS LEFT_DIR LIST OF OTHERS REAL RETURNS RIGHT_DIR SWITCH THEN WHEN
 
 %type <value> body statement_ statement cases case expression term factor primary
 	 unary_expression condition or_condition and_condition not_condition relation else_clause
@@ -110,8 +110,8 @@ statement:
 	WHEN condition ',' expression ':' expression {$$ = $2 ? $4 : $6;} |
 	switch_statement {$$ = $1;} |
 	if_statement {$$ = $1;} |
-	FOLD direction ADDOP list_choice ENDFOLD {$$ = evaluateFold($3, $4, $2 == LEFT_FOLD);} |
-	FOLD direction MULOP list_choice ENDFOLD {$$ = evaluateFold($3, $4, $2 == LEFT_FOLD);} ;
+	FOLD direction ADDOP list_choice ENDFOLD {$$ = evaluateFold($3, $4, $2 == LEFT);} |
+	FOLD direction MULOP list_choice ENDFOLD {$$ = evaluateFold($3, $4, $2 == LEFT);} ;
 
 switch_statement:
 	SWITCH expression IS cases OTHERS ARROW statement_ ENDSWITCH
@@ -129,8 +129,8 @@ else_clause:
 	%empty {$$ = 0;} ;
 
 direction:
-	LEFT {$$ = LEFT_FOLD;} |
-	RIGHT {$$ = RIGHT_FOLD;} ;
+	LEFT_DIR {$$ = LEFT;} |
+	RIGHT_DIR {$$ = RIGHT;} ;
 
 list_choice:
 	list {$$ = $1;} |
