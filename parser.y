@@ -63,9 +63,13 @@ double* parameters = NULL;
 %type <list> list expressions list_choice
 
 /* Define operator precedence - lowest to highest */
-%right EXPOP
+%left OROP
+%left ANDOP
+%right NOTOP
+%left RELOP
 %left ADDOP
 %left MULOP REMOP
+%right EXPOP
 %right NEGOP
 
 %%
@@ -185,7 +189,7 @@ term:
 	factor {$$ = $1;} ;
 
 factor:
-	factor EXPOP unary_expression {$$ = evaluateArithmetic($1, $2, $3);} |
+	unary_expression EXPOP factor {$$ = evaluateArithmetic($1, $2, $3);} |
 	unary_expression {$$ = $1;} ;
 
 unary_expression:
