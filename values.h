@@ -1,15 +1,13 @@
 // CMSC 430 Compiler Theory and Design
-// Project 3 Skeleton
-// UMGC CITE
-// Summer 2023
+// Project 3
+// values.h
 
-// This file contains type definitions and the function
-// definitions for the evaluation functions
+// This file contains function definitions for the evaluation functions
 
 typedef char* CharPtr;
 
-enum Operators {ADD, MULTIPLY, LESS, AND};
+enum Operators {ADD, MULTIPLY, AND, LESS};
 
-double evaluateArithmetic(double left, Operators operator_, double right);
-double evaluateRelational(double left, Operators operator_, double right);
-
+double evaluateReduction(const vector<double>& values, Operators operator_type, bool left);
+double evaluateArithmetic(double left, Operators operator_type, double right);
+double evaluateRelational(double left, Operators operator_type, double right);
