@@ -56,7 +56,7 @@ double* parameters = NULL;
 %token BEGIN_ CASE CHARACTER ELSE ELSIF END ENDIF ENDSWITCH ENDFOLD FOLD FUNCTION IF
 	INTEGER IS LEFT_DIR LIST OF OTHERS REAL RETURNS RIGHT_DIR SWITCH THEN WHEN
 
-%type <value> body statement_ statement cases case expression term factor primary
+%type <value> body statement_ statement cases case expression term  primary
 	 unary_expression condition or_condition and_condition not_condition relation else_clause
 	 if_statement switch_statement direction elsif_list
 
@@ -179,8 +179,8 @@ term:
 	factor {$$ = $1;} ;
 
 factor:
-	factor EXPOP unary_expression {$$ = evaluateArithmetic($1, $2, $3);} |
-	unary_expression {$$ = $1;} ;
+	primary EXPOP factor {$$ = evaluateArithmetic($1, $2, $3);} |
+	primary {$$ = $1;} ;
 
 unary_expression:
 	NEGOP unary_expression {$$ = -$2;} |
