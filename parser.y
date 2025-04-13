@@ -110,8 +110,8 @@ statement:
 	WHEN condition ',' expression ':' expression {$$ = $2 ? $4 : $6;} |
 	switch_statement {$$ = $1;} |
 	if_statement {$$ = $1;} |
-	FOLD direction ADDOP list_choice ENDFOLD {$$ = evaluateFold($3, $4, $2 == LEFT);} |
-	FOLD direction MULOP list_choice ENDFOLD {$$ = evaluateFold($3, $4, $2 == LEFT);} ;
+	FOLD direction ADDOP list_choice ENDFOLD {$$ = evaluateFold($3, $4, $2 == LEFT_FOLD);} |
+	FOLD direction MULOP list_choice ENDFOLD {$$ = evaluateFold($3, $4, $2 == LEFT_FOLD);} ;
 
 switch_statement:
 	SWITCH expression IS cases OTHERS ARROW statement_ ENDSWITCH
@@ -129,8 +129,8 @@ else_clause:
 	%empty {$$ = 0;} ;
 
 direction:
-	LEFT {$$ = LEFT;} |
-	RIGHT {$$ = RIGHT;} ;
+	LEFT {$$ = LEFT_FOLD;} |
+	RIGHT {$$ = RIGHT_FOLD;} ;
 
 list_choice:
 	list {$$ = $1;} |
