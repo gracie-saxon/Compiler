@@ -67,13 +67,13 @@ function	{ ECHO; return(FUNCTION); }
 if		{ ECHO; return(IF); }
 integer		{ ECHO; return(INTEGER); }
 is		{ ECHO; return(IS); }
-left		{ ECHO; return(LEFT); }
+left		{ ECHO; return(LEFT_DIR); }
 list		{ ECHO; return(LIST); }
 of		{ ECHO; return(OF); }
 others		{ ECHO; return(OTHERS); }
 real		{ ECHO; return(REAL); }
 returns		{ ECHO; return(RETURNS); }
-right		{ ECHO; return(RIGHT); }
+right		{ ECHO; return(RIGHT_DIR); }
 switch		{ ECHO; return(SWITCH); }
 then		{ ECHO; return(THEN); }
 when		{ ECHO; return(WHEN); }
