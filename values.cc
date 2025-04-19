@@ -86,13 +86,11 @@ double evaluateRelational(double left, Operators operator_, double right) {
     return result;
 }
 
-// Convert a hexadecimal string to an integer
 int hexToInt(const char* hexStr) {
     // Skip the '#' prefix
     return strtol(hexStr + 1, NULL, 16);
 }
 
-// Parse a character literal, handling escape characters
 char parseCharLiteral(const char* literal) {
     if (literal[1] != '\\')
         return literal[1];
