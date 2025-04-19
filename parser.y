@@ -25,7 +25,6 @@ void yyerror(const char* message);
 double extract_element(CharPtr list_name, double subscript);
 double evaluateFold(Operators oper, vector<double>* list, bool isLeft);
 
-// Forward declarations for functions defined in values.cc
 extern int hexToInt(const char* hexStr);
 extern char parseCharLiteral(const char* literal);
 
