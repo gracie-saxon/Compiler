@@ -227,12 +227,10 @@ double evaluateFold(Operators oper, vector<double>* list, bool isLeft) {
     double result;
     
     if (isLeft) {
-        // Left fold ((a op b) op c)
         result = (*list)[0];
         for (size_t i = 1; i < list->size(); i++)
             result = evaluateArithmetic(result, oper, (*list)[i]);
     } else {
-        // Right fold (a op (b op c))
         result = (*list)[list->size() - 1];
         for (int i = list->size() - 2; i >= 0; i--)
             result = evaluateArithmetic((*list)[i], oper, result);
@@ -242,7 +240,6 @@ double evaluateFold(Operators oper, vector<double>* list, bool isLeft) {
 }
 
 int main(int argc, char *argv[]) {
-    // Handle command line parameters
     if (argc > 1) {
         parameters = new double[argc - 1];
         for (int i = 1; i < argc; i++) {
@@ -255,7 +252,6 @@ int main(int argc, char *argv[]) {
 	if (lastLine() == 0)
 		cout << "Result = " << result << endl;
     
-    // Clean up
     if (parameters != NULL)
         delete[] parameters;
         
