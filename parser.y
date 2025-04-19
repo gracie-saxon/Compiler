@@ -61,7 +61,6 @@ double* parameters = NULL;
 
 %type <list> list expressions list_choice
 
-/* Define operator precedence - lowest to highest */
 %left OROP
 %left ANDOP
 %right NOTOP
