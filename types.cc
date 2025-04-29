@@ -20,13 +20,11 @@ void checkAssignment(Types lValue, Types rValue, string message) {
             if (lValue == REAL_TYPE && rValue == INT_TYPE) {
                 return; // This is allowed - widening
             }
-            // Check for narrowing (REAL_TYPE to INT_TYPE)
-            else if (lValue == INT_TYPE && rValue == REAL_TYPE) {
-                appendError(GENERAL_SEMANTIC, "Illegal Narrowing " + message);
-            }
-            else {
+            // For non-narrowing type mismatches
+            if (!(lValue == INT_TYPE && rValue == REAL_TYPE)) {
                 appendError(GENERAL_SEMANTIC, "Type Mismatch on " + message);
             }
+            // Narrowing errors are reported in the parser
         }
     }
 }
@@ -58,7 +56,7 @@ Types checkArithmetic(Types left, Types right) {
     if (left == MISMATCH || right == MISMATCH)
         return MISMATCH;
     
-    // Both operands are numeric types
+    // Both operands must be numeric types
     if ((left == INT_TYPE || left == REAL_TYPE) && 
         (right == INT_TYPE || right == REAL_TYPE)) {
         
@@ -133,6 +131,10 @@ Types checkIfStatement(Types thenBranch, Types elseBranch) {
     if (thenBranch == MISMATCH || elseBranch == MISMATCH)
         return MISMATCH;
     
+    // None is like a placeholder for no else clause
+    if (elseBranch == NONE)
+        return thenBranch;
+        
     if (thenBranch != elseBranch) {
         appendError(GENERAL_SEMANTIC, "If-Elsif-Else Type Mismatch");
         return MISMATCH;
