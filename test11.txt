@@ -1,6 +1,0 @@
-// Single Parameter Declaration
-
-function main a: real returns real;
-begin
-    a + 1.5;
-end;
