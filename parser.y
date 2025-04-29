@@ -45,6 +45,7 @@ Symbols<Types> lists;
 %type <type> list expressions body type statement_ statement cases case expression
     term factor primary unary_expression function_header condition relation or_condition
     and_condition not_condition elsif_list else_clause if_statement switch_statement
+    list_choice direction operator
 
 %type <typeList> expression_list
 
@@ -186,12 +187,12 @@ case:
     error ';' { $$ = MISMATCH; };
 
 direction:
-    LEFT |
-    RIGHT;
+    LEFT { $$ = INT_TYPE; } |
+    RIGHT { $$ = INT_TYPE; };
 
 operator:
-    ADDOP |
-    MULOP;
+    ADDOP { $$ = INT_TYPE; } |
+    MULOP { $$ = INT_TYPE; };
 
 list_choice:
     list { $$ = $1; } |
