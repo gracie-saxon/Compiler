@@ -23,6 +23,7 @@ void yyerror(const char* message);
 
 Symbols<Types> scalars;
 Symbols<Types> lists;
+bool narrowingFunctionReturnReported = false;
 
 %}
 
@@ -54,8 +55,10 @@ Symbols<Types> lists;
 function:
     function_header variables body {
         checkAssignment($1, $3, "Function Return");
-        if ($1 == INT_TYPE && $3 == REAL_TYPE)
+        if ($1 == INT_TYPE && $3 == REAL_TYPE && !narrowingFunctionReturnReported) {
             appendError(GENERAL_SEMANTIC, "Illegal Narrowing Function Return");
+            narrowingFunctionReturnReported = true;
+        }
     };
 
 function_header:
@@ -301,6 +304,7 @@ void yyerror(const char* message) {
 
 int main(int argc, char *argv[]) {
     firstLine();
+    narrowingFunctionReturnReported = false;
     yyparse();
     lastLine();
     return 0;
