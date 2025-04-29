@@ -1,7 +1,0 @@
-// Test Left Fold
-
-function main returns integer;
-begin
-    fold left - (3, 2, 1) endfold;
-end;
-
